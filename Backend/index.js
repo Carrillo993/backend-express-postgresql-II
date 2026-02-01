@@ -55,7 +55,7 @@ app.listen(PORT, () => {
   console.log(`Servidor activo en http://localhost:${PORT}`);
 });
 
-// parte de los likes, parece que esto es para la parte II
+// parte II
 app.put("/posts/like/:id", async (req, res) => {
     try {
       
@@ -79,4 +79,24 @@ app.put("/posts/like/:id", async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+
+  // DELETE /posts/:id
+app.delete("/posts/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      const consulta = `
+        DELETE FROM posts
+        WHERE id = $1
+        RETURNING *
+      `;
+  
+      const result = await pool.query(consulta, [id]);
+  
+      res.json({ message: "Post eliminado correctamente", post: result.rows[0] });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
   
